@@ -19,10 +19,19 @@ public class Cube {
 	}
 	public Cube rotate(int nt, int f){
 		int[][][]nw=clone(faces);
-		int[][]sw={{2,0},{2,2},{0,2}};
-		for(int i=0;i<3;i++)
-			for(int j=0;j<3;j++)
-				nw[f][i][j]=faces[f][sw[nt-1][0]==0?j:(2-j)][sw[nt-1][1]==0?i:(2-i)];
+		if(nt==1){
+			for(int i=0;i<3;i++)
+				for(int j=0;j<3;j++)
+					nw[f][i][j]=faces[f][2-j][i];
+		}else if (nt==2){
+			for(int i=0;i<3;i++)
+				for(int j=0;j<3;j++)
+					nw[f][i][j]=faces[f][2-i][2-j];
+		}else{
+			for(int i=0;i<3;i++)
+				for(int j=0;j<3;j++)
+					nw[f][i][j]=faces[f][j][2-i];
+		}
 		int[][]rv=sr[f];
 		int sk;
 		for(int i=0;i<12;i++){
