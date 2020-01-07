@@ -4,6 +4,9 @@ public class SmallCube{
 	public SmallCube(int[][][] f){
 		faces = f;
 	}
+	public int[][][] getFaces() {
+		return faces;
+	}
 	private int[][][] clone(int[][][] s){
 		
 		int [][][] n = new int [6][2][2];
