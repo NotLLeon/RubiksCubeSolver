@@ -12,7 +12,7 @@ public class Solver {
 	private static Queue <Integer> snumMv;
 	private static int sCurM, cnt, cDepth;
 	private static Node curN;
-	private static String [] lbl;
+	private static String [] lbl, temp;
 	private static String cMvs, stemp;
 	private static int[][][] f, smlCube;
 	private static class Node implements Comparable<Node>{
@@ -35,7 +35,7 @@ public class Solver {
 	}
 
 	public static String solve3(Cube c){
-		init(c);
+		init();
 
 		if(vis[0].containsKey(bHsh))return vis[0].get(bHsh);
 		while(true) {
@@ -51,9 +51,11 @@ public class Solver {
 					if(vis[(cnt+1)%2].containsKey(nexH)) {
 						
 						if(cnt%2 == 0) 
-							return stemp + format(vis[(cnt+1)%2].get(nexH));
+							return format(stemp + 
+									rev(vis[(cnt+1)%2].get(nexH)));
 						else 
-							return vis[(cnt+1)%2].get(nexH) + format(stemp);
+							return format(vis[(cnt+1)%2].get(nexH) + 
+									rev(stemp));
 						
 					}else if(!vis[cnt%2].containsKey(nexH) && cDepth < 10) {
 						vis[cnt%2].put(nexH, stemp);
@@ -84,7 +86,7 @@ public class Solver {
 		return solve2(new SmallCube(smlCube));
 	}
 	public static int solve2(SmallCube sc){
-		
+		init();
 		sH = sc.getHash();
 		nxtSc = new LinkedList <SmallCube> ();
 		snumMv = new LinkedList <Integer> ();
@@ -96,7 +98,7 @@ public class Solver {
 		if(!lkp.containsKey(sH)){
 			
 			while(true) {
-
+				System.out.println(lkp.size());
 				sCur=nxtSc.poll();
 				sCurM=snumMv.poll();
 				sCurH=sCur.getHash();
@@ -126,7 +128,7 @@ public class Solver {
 		}
 		return lkp.get(sH);
 	}
-	private static void init(Cube c){
+	private static void init(){
 		
 		base = new Cube(new int [][][]
 				{{{5,5,5},{5,5,5},{5,5,5}},{{1,1,1},{1,1,1},{1,1,1}},
@@ -139,7 +141,7 @@ public class Solver {
 		
 		bHsh = base.getHash();
 		sbHsh = sbase.getHash();
-		cHsh = c.getHash();
+		//cHsh = c.getHash();
 		pqs = new PriorityQueue [2];
 		pqs[0] = new PriorityQueue<Node>();
 		pqs[1] = new PriorityQueue<Node>();
@@ -152,13 +154,21 @@ public class Solver {
 		vis[0].put(cHsh,"");
 		cnt = 0;
 		lbl = new String[]{"L","U","R","F","D","B"};
-		System.out.println(0);
-		pqs[0].add(new Node(c, 0, getHeuristic(c), ""));
-		System.out.println(1);
-		pqs[1].add(new Node(base, 0, getHeuristic(base), ""));
+		//pqs[0].add(new Node(c, 0, getHeuristic(c), ""));
+		//pqs[1].add(new Node(base, 0, getHeuristic(base), ""));
 	}
+	private static String rev(String s) {
+		temp = s.split(" ");
+		String ans = "";
+		for(int i = temp.length-1; i >= 0; i--) 
+			ans+=temp[i].charAt(0) + "" + (52-temp[i].charAt(1)) + " ";
+		
+		return ans;
+		
+	}
+	
 	private static String format(String s) {
-		String [] temp = s.split(" ");
+		temp = s.split(" ");
 		Stack <String> st = new Stack <String>();
 		for(int i = temp.length-1; i >= 0; i--) {
 			
@@ -166,13 +176,13 @@ public class Solver {
 			else if (st.peek().charAt(0)==temp[i].charAt(0)) {
 				
 				int dt = (st.pop().charAt(1)+temp[i].charAt(1)-96)%4;
-				if (dt != 0) st.push(temp[i].charAt(0)+ ""+dt+" ");
+				if (dt != 0) st.push(temp[i].charAt(0)+ ""+dt);
 				
 			}else st.add(temp[i]);
 		}
 		
 		String ans = "";
-		while(!st.isEmpty())ans += st.pop();
+		while(!st.isEmpty())ans += st.pop() + " ";
 		return ans;
 		
 	}
