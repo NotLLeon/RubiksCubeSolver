@@ -14,6 +14,7 @@ public class Solver {
 	private static Node curN;
 	private static String [] lbl;
 	private static String cMvs, stemp;
+	private static int[][][] f, smlCube;
 	private static class Node implements Comparable<Node>{
 		
 		Cube cb;
@@ -32,13 +33,11 @@ public class Solver {
 			return this.hr - e.hr;
 		}
 	}
-	public static void main (String [] args) {
-		System.out.println(format("R2 R2 F3 "));
-	}
+
 	public static String solve3(Cube c){
-		// TODO
 		init(c);
-		
+
+		if(vis[0].containsKey(bHsh))return vis[0].get(bHsh);
 		while(true) {
 			curN = pqs[cnt%2].poll();
 			cur = curN.cb;
@@ -71,9 +70,8 @@ public class Solver {
 		
 	}
 	private static int getHeuristic(Cube c){
-		
-		int [][][] f = c.getFaces();
-		int [][][] smlCube = new int [6][2][2];
+		f = c.getFaces();
+		smlCube = new int [6][2][2];
 		
 		for(int i = 0; i < 6; i++){
 			
@@ -94,17 +92,17 @@ public class Solver {
 		sVis.add(sH);
 		nxtSc.add(sc);
 		snumMv.add(0);
-		int [] fcs = {0,1,3};
 		all:
 		if(!lkp.containsKey(sH)){
 			
 			while(true) {
+
 				sCur=nxtSc.poll();
 				sCurM=snumMv.poll();
 				sCurH=sCur.getHash();
 				
 				for(int i = 1; i <= 3; i++) {
-					for(int j : fcs) {
+					for(int j = 0; j < 6; j++) {
 						
 						sNex=sCur.rotate(i,j);
 						sNexH=sNex.getHash();
@@ -145,20 +143,21 @@ public class Solver {
 		pqs = new PriorityQueue [2];
 		pqs[0] = new PriorityQueue<Node>();
 		pqs[1] = new PriorityQueue<Node>();
-		pqs[0].add(new Node(c, 0, getHeuristic(c), ""));
-		pqs[1].add(new Node(base, 0, getHeuristic(base), ""));
+		lkp = new HashMap <Long, Integer>();
+		lkp.put(sbHsh, 0);
 		vis = new HashMap [2];
 		vis[0] = new HashMap <Long, String>();
 		vis[1] = new HashMap <Long, String>();
 		vis[1].put(bHsh, "");
 		vis[0].put(cHsh,"");
-		lkp = new HashMap <Long, Integer>();
-		lkp.put(sbHsh, 0);
 		cnt = 0;
 		lbl = new String[]{"L","U","R","F","D","B"};
+		System.out.println(0);
+		pqs[0].add(new Node(c, 0, getHeuristic(c), ""));
+		System.out.println(1);
+		pqs[1].add(new Node(base, 0, getHeuristic(base), ""));
 	}
 	private static String format(String s) {
-		//  TEST
 		String [] temp = s.split(" ");
 		Stack <String> st = new Stack <String>();
 		for(int i = temp.length-1; i >= 0; i--) {
@@ -171,6 +170,7 @@ public class Solver {
 				
 			}else st.add(temp[i]);
 		}
+		
 		String ans = "";
 		while(!st.isEmpty())ans += st.pop();
 		return ans;
