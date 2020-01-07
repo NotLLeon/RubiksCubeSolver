@@ -2,23 +2,26 @@ import java.util.*;
 
 public class Solver {
 	private static PriorityQueue <Node> [] pqs;
-	private static HashMap <Long, Integer> lkp2;
-	private static HashMap <Long, String> [] lkp;
+	private static HashMap <Long, Integer> lkp;
+	private static HashMap <Long, String> [] vis;
 	private static HashSet<Long>sVis;
-	private static Cube base;
+	private static Cube base, cur, next;
 	private static SmallCube sbase, sCur, sNex;
-	private static long bHsh, sbHsh, sH, sCurH, sNexH, cHsh;
+	private static long bHsh, sbHsh, sH, sCurH, sNexH, cHsh, nexH;
 	private static Queue <SmallCube> nxtSc;
 	private static Queue <Integer> snumMv;
 	private static int [] fcs;
-	private static int sCurM;
+	private static int sCurM, cnt;
+	private static Node curN;
+	private static String [] lbl;
 	private static class Node implements Comparable<Node>{
 		
-		long hash;
+		Cube cb;
 		int hr, depth;
 		
-		Node(long a, int b, int c){
-			hash = a;
+		Node(Cube a, int b, int c){
+			
+			cb = a;
 			depth = b;
 			hr = c;
 		}
@@ -30,6 +33,28 @@ public class Solver {
 	public static String solve3(Cube c){
 		// TODO
 		init(c);
+		
+		while(true) {
+			curN = pqs[cnt%2].poll();
+			cur = curN.cb;
+			for(int f = 0; f < 6; f++) {
+				for(int nt = 1; nt <= 3; nt++) {
+					next = cur.rotate(nt, f);
+					nexH = next.getHash();
+					
+					if(vis[(cnt+1)%2].containsKey(nexH)) {
+						if(cnt%2 == 0) {
+							
+						}
+						return vis[(cnt+1)%2]
+					}else if(!vis[cnt%2].containsKey(nexH)) {
+						vis[cnt%2].put(nexH, value);
+					}
+				}
+			}
+			cnt++;
+		}
+			
 		
 	}
 	private static int getHeuristic(Cube c){
@@ -58,7 +83,7 @@ public class Solver {
 		snumMv.add(0);
 		int [] fcs = {0,1,3};
 		all:
-		if(!lkp2.containsKey(sH)){
+		if(!lkp.containsKey(sH)){
 			
 			while(true) {
 				sCur=nxtSc.poll();
@@ -71,9 +96,9 @@ public class Solver {
 						sNex=sCur.rotate(i,j);
 						sNexH=sNex.getHash();
 						
-						if(lkp2.containsKey(sNexH)) {
+						if(lkp.containsKey(sNexH)) {
 							
-							lkp2.put(sH, lkp2.get(sNexH) + sCurM + 1);
+							lkp.put(sH, lkp.get(sNexH) + sCurM + 1);
 							break all;
 							
 						} else if (!sVis.contains(sNexH)){
@@ -88,7 +113,7 @@ public class Solver {
 			}
 			
 		}
-		return lkp2.get(sH);
+		return lkp.get(sH);
 	}
 	private static void init(Cube c){
 		
@@ -108,14 +133,31 @@ public class Solver {
 		pqs = new PriorityQueue [2];
 		pqs[0] = new PriorityQueue<Node>();
 		pqs[1] = new PriorityQueue<Node>();
-		pqs[0].add(new Node(cHsh, 0, getHeuristic(c)));
-		pqs[1].add(new Node(bHsh, 0, getHeuristic(base)));
-		lkp = new HashMap [2];
-		lkp[0] = new HashMap <Long, String>();
-		lkp[1] = new HashMap <Long, String>();
-		lkp2 = new HashMap <Long, Integer>();
-		lkp[1].put(bHsh, "");
-		lkp[0].put(cHsh,"");
-		lkp2.put(sbHsh, 0);
+		pqs[0].add(new Node(c, 0, getHeuristic(c)));
+		pqs[1].add(new Node(base, 0, getHeuristic(base)));
+		vis = new HashMap [2];
+		vis[0] = new HashMap <Long, String>();
+		vis[1] = new HashMap <Long, String>();
+		vis[1].put(bHsh, "");
+		vis[0].put(cHsh,"");
+		lkp = new HashMap <Long, Integer>();
+		lkp.put(sbHsh, 0);
+		cnt = 0;
+		lbl = new String[]{"L","U","R","F","D","B"};
+	}
+	private static String format(String s) {
+		String [] temp = s.split(" ");
+		Stack <String> st = new Stack <String>();
+		for(int i = temp.length-1; i >= 0; i--) {
+			
+			if(st.isEmpty()) st.add(temp[i]);
+			else if (st.peek().charAt(0)==temp[i].charAt(0)) 
+				st.push(temp[i].charAt(0)+((st.peek().charAt(1)+temp[i].charAt(1)-98)%3+1)+" ");
+			else st.add(temp[i]);
+		}
+		String ans = "";
+		while(!st.isEmpty())ans += st.pop();
+		return ans;
+		
 	}
 }
