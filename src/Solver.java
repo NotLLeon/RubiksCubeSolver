@@ -28,6 +28,7 @@ public class Solver {
 		}
 	}
 	public static String solve3(Cube c){
+		// TODO
 		init(c);
 		
 	}
