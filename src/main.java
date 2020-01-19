@@ -7,8 +7,12 @@ public class main {
 				{{{5,5,5},{5,5,5},{5,5,5}},{{1,1,1},{1,1,1},{1,1,1}},
 			{{6,6,6},{6,6,6},{6,6,6}},{{2,2,2},{2,2,2},{2,2,2}},
 			{{3,3,3},{3,3,3},{3,3,3}},{{4,4,4},{4,4,4},{4,4,4}}});
-		cb = cb.rotate(3, 3).rotate(2, 0).rotate(1, 1).rotate(2, 5).rotate(1, 4);
-		System.out.println(Solver.solve3(cb));
+		SmallCube sb = new SmallCube(new int [][][]
+				{{{5,5},{5,5}},{{1,1},{1,1}},{{6,6},{6,6}},
+			{{2,2},{2,2}},{{3,3},{3,3}},{{4,4},{4,4}}});
+		Solver.solve3(cb);
+		sb=sb.rotate(1, 0);
+		System.out.println(Solver.solve2(sb));
 
 	}
 

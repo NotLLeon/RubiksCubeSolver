@@ -38,6 +38,7 @@ public class Solver {
 		init(c);
 		if(vis[0].containsKey(bHsh))return vis[0].get(bHsh);
 		while(true) {
+			System.out.println(lkp.size());
 			curN = pqs[cnt%2].poll();
 			cur = curN.cb;
 			cMvs = curN.mvs;
@@ -58,10 +59,9 @@ public class Solver {
 						
 					}else if(!vis[cnt%2].containsKey(nexH) && cDepth < 10) {
 						vis[cnt%2].put(nexH, stemp);
-						pqs[cnt%2].add(new Node(next, 
-												cDepth+1, 
-												curN.hr+getHeuristic(next), 
-												stemp));
+						pqs[cnt%2].add(
+								new Node(next, cDepth+1, 
+										cDepth+getHeuristic(next), stemp));
 					}
 				}
 			}
