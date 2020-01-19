@@ -35,8 +35,7 @@ public class Solver {
 	}
 
 	public static String solve3(Cube c){
-		init();
-
+		init(c);
 		if(vis[0].containsKey(bHsh))return vis[0].get(bHsh);
 		while(true) {
 			curN = pqs[cnt%2].poll();
@@ -61,7 +60,7 @@ public class Solver {
 						vis[cnt%2].put(nexH, stemp);
 						pqs[cnt%2].add(new Node(next, 
 												cDepth+1, 
-												getHeuristic(next), 
+												curN.hr+getHeuristic(next), 
 												stemp));
 					}
 				}
@@ -86,7 +85,6 @@ public class Solver {
 		return solve2(new SmallCube(smlCube));
 	}
 	public static int solve2(SmallCube sc){
-		init();
 		sH = sc.getHash();
 		nxtSc = new LinkedList <SmallCube> ();
 		snumMv = new LinkedList <Integer> ();
@@ -98,7 +96,6 @@ public class Solver {
 		if(!lkp.containsKey(sH)){
 			
 			while(true) {
-				System.out.println(lkp.size());
 				sCur=nxtSc.poll();
 				sCurM=snumMv.poll();
 				sCurH=sCur.getHash();
@@ -128,7 +125,7 @@ public class Solver {
 		}
 		return lkp.get(sH);
 	}
-	private static void init(){
+	private static void init(Cube c){
 		
 		base = new Cube(new int [][][]
 				{{{5,5,5},{5,5,5},{5,5,5}},{{1,1,1},{1,1,1},{1,1,1}},
@@ -141,7 +138,7 @@ public class Solver {
 		
 		bHsh = base.getHash();
 		sbHsh = sbase.getHash();
-		//cHsh = c.getHash();
+		cHsh = c.getHash();
 		pqs = new PriorityQueue [2];
 		pqs[0] = new PriorityQueue<Node>();
 		pqs[1] = new PriorityQueue<Node>();
@@ -154,8 +151,8 @@ public class Solver {
 		vis[0].put(cHsh,"");
 		cnt = 0;
 		lbl = new String[]{"L","U","R","F","D","B"};
-		//pqs[0].add(new Node(c, 0, getHeuristic(c), ""));
-		//pqs[1].add(new Node(base, 0, getHeuristic(base), ""));
+		pqs[0].add(new Node(c, 0, getHeuristic(c), ""));
+		pqs[1].add(new Node(base, 0, getHeuristic(base), ""));
 	}
 	private static String rev(String s) {
 		temp = s.split(" ");
